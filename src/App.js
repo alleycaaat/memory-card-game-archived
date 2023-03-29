@@ -9,6 +9,9 @@ import Count from './components/Count';
 import Rules from './components/Rules';
 import StartBtn from './components/ui/StartBtn';
 import ResetBtn from './components/ui/ResetBtn';
+import RulesBtn from './components/ui/RulesBtn';
+import { Credit } from './components/ui/credit';
+import { Scoring } from './components/ui/scoring';
 
 function App() {
     const [orgCards, setOrgCards] = useState([]); //original starting card deck from server
@@ -226,7 +229,7 @@ function App() {
     };
 
     return (
-        <div className='wrapper'>
+        <main className='wrapper'>
             <div className='heading'>
                 <h1>Memory Game</h1>
             </div>
@@ -249,22 +252,11 @@ function App() {
                     isDiff={isDiff}
                     setLoading={setLoading}
                     countCards={countCards}
-                    />
+                />
                 <ResetBtn onClick={reset} />
-                <button className='option' onClick={rules}>
-                    Rules
-                </button>
+                <RulesBtn onClick={rules} />
             </div>
-            <div className='bottom'>
-                <div className='display'>
-                    {timer}
-                    {timer === 1 ? ' second' : ' seconds'}
-                </div>
-                <div className='display'>
-                    {score}
-                    {score === 1 ? ' incorrect guess' : ' incorrect guesses'}
-                </div>
-            </div>
+            <Scoring timer={timer} score={score} />
             <div className='display msg'>{display}</div>
             {loading && <Loading />}
             {rulesstate && <Rules />}
@@ -282,47 +274,8 @@ function App() {
                     </div>
                 ))}
             </div>
-            <div className='credit'>
-                <p>
-                    Created by {' '}
-                    <a
-                        href='https://achulslander.com/'
-                        target='_blank'
-                        rel='noreferrer'
-                    >
-                        AC Hulslander
-                    </a>
-                </p>
-                <p>
-                    <a
-                        href='https://github.com/alleycaaat/memory-card-game'
-                        target='_blank'
-                        rel='noreferrer'
-                    >
-                        View this project on GitHub
-                    </a>
-                </p>
-                <p>
-                    <a
-                        href='https://codepen.io/alleycaaat/pens/public'
-                        target='_blank'
-                        rel='noreferrer'
-                    >
-                        See my pens
-                    </a>
-                </p>
-                <p className='smol'>
-                    Coding icons are from {' '}
-                    <a
-                        target='_blank'
-                        href='https://icons8.com'
-                        rel='noreferrer'
-                    >
-                        Icons8
-                    </a>
-                </p>
-            </div>
-        </div>
+            <Credit />
+        </main>
     );
 }
 
