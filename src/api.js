@@ -1,7 +1,5 @@
-/* the API method will call the function on the backend to make the database things do */
-
-const cards = (cat) => {
-    console.log('API CALL',cat)
+const getCards = (cat) => {
+    console.log('API CALL', cat);
     return fetch('/.netlify/functions/cards', {
         body: JSON.stringify(cat),
         method: 'POST',
@@ -10,8 +8,4 @@ const cards = (cat) => {
     });
 };
 
-const api = {
-    cards
-};
-
-export default api;
+export {getCards}

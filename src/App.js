@@ -1,17 +1,19 @@
 import { useState, useEffect, useRef } from 'react';
-import api from './api';
-import CardDeck from './components/CardDeck';
-import './style.scss';
-import Loading from './components/loading';
-import Difficulty from './components/Difficulty';
-import Options from './components/Options';
-import Count from './components/Count';
-import Rules from './components/Rules';
+
 import StartBtn from './components/ui/StartBtn';
 import ResetBtn from './components/ui/ResetBtn';
 import RulesBtn from './components/ui/RulesBtn';
+import Difficulty from './components/card-deck/Difficulty';
+import Message from './components/ui/Message';
+import CardDeck from './components/card-deck/CardDeck';
+import Loading from './components/loading';
+import Options from './components/card-deck/Options';
+import Count from './components/card-deck/Count';
+import Rules from './components/ui/Rules';
+
 import { Credit } from './components/ui/credit';
 import { Scoring } from './components/ui/scoring';
+import {getCards} from './api';
 
 function App() {
     const [orgCards, setOrgCards] = useState([]); //original starting card deck from server
@@ -28,13 +30,13 @@ function App() {
 
     const initialState = {
         category: '',
-        isDiff: false,
+        difficulty: '',
         count: 0,
         display: '',
         rulesstate: false
     };
     const [details, setDetails] = useState(initialState);
-    const { category, isDiff, count, display, rulesstate } = details;
+    const { category, count, display, rulesstate, difficulty } = details;
 
     const tick = useRef(null);
 
@@ -48,9 +50,7 @@ function App() {
         return () => clearInterval(tick.current); //clear on unmount
     });
 
-    //fires when category is changed
     useEffect(() => {
-        //eliminate api call error by exiting
         if (category === undefined) {
             return console.log('exit early');
         }
@@ -60,8 +60,7 @@ function App() {
             setLoading(true);
             //api call to get card deck based on the category
             const getDeck = async () => {
-                await api
-                    .cards(category)
+                await getCards(category)
                     .then((cards) => {
                         //map over the data and push it to an array with proper formatting
                         cards.map((card, i) => {
@@ -82,7 +81,6 @@ function App() {
                         console.log('API error ', e);
                     });
             };
-            //call the function
             getDeck();
             return () => (running = false);
         }
@@ -120,7 +118,7 @@ function App() {
         let copy = [];
         let final = [];
         //if playing difficult, need to get the match card
-        if (isDiff === 'true') {
+        if (difficulty === 'hard') {
             shuffled.map((card) => {
                 copy.push({
                     name: card.name,
@@ -236,11 +234,29 @@ function App() {
             {!running && (
                 <>
                     <h2>Category:</h2>
-                    <Options deck={deckOptions} />
-                    <h2>Difficulty level:</h2>
-                    <Difficulty deck={deckOptions} />
-                    <h2>Card amount:</h2>
-                    <Count deck={deckOptions} />
+                    <div role='group' className='top'>
+                        <Options
+                            onClick={deckOptions}
+                            category={category}
+                            value='all_codes'>
+                            Coding
+                        </Options>
+                        <Options
+                            onClick={deckOptions}
+                            category={category}
+                            value='all_colors'>
+                            Colors
+                        </Options>
+                        <Options
+                            onClick={deckOptions}
+                            category={category}
+                            value='all_math'>
+                            Math
+                        </Options>
+                    </div>
+
+                    <Difficulty details={details} deck={deckOptions} />
+                    <Count details={details} deck={deckOptions} />
                 </>
             )}
             <div className='miscbuttons'>
@@ -249,17 +265,20 @@ function App() {
                     details={details}
                     setDetails={setDetails}
                     category={category}
-                    isDiff={isDiff}
+                    difficulty={difficulty}
                     setLoading={setLoading}
                     countCards={countCards}
                 />
                 <ResetBtn onClick={reset} />
                 <RulesBtn onClick={rules} />
             </div>
+
             <Scoring timer={timer} score={score} />
-            <div className='display msg'>{display}</div>
+            <Message msg={display} />
+
             {loading && <Loading />}
             {rulesstate && <Rules />}
+
             <div className='cardHolder'>
                 {deck.map((card, i) => (
                     <div key={i}>
@@ -270,7 +289,7 @@ function App() {
                             match={card.match}
                             value={card.value}
                             clicked={clicked}
-                        ></CardDeck>
+                        />
                     </div>
                 ))}
             </div>

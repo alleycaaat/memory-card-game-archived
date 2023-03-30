@@ -1,4 +1,4 @@
-const StartBtn = ({count, details, setDetails, category, isDiff, setLoading, countCards}) => {
+const StartBtn = ({ count, details, setDetails, category, difficulty, setLoading, countCards }) => {
     const start = () => {
         //veryify all necessary information is in state
         setDetails({ ...details, display: '' });
@@ -14,7 +14,7 @@ const StartBtn = ({count, details, setDetails, category, isDiff, setLoading, cou
                 display: 'Please select a category'
             });
         }
-        if (isDiff === undefined) {
+        if (difficulty === undefined) {
             return setDetails({
                 ...details,
                 display: 'Please select a difficulty level',
@@ -24,9 +24,9 @@ const StartBtn = ({count, details, setDetails, category, isDiff, setLoading, cou
         setLoading(true);
         countCards();
     };
-  return (
-    <button className='option' onClick={start}>Start</button>
-  )
-}
+    return (
+        <button className='option' onClick={start}>Start</button>
+    );
+};
 
-export default StartBtn
+export default StartBtn;
